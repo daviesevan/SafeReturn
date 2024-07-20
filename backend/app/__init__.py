@@ -1,0 +1,29 @@
+from flask import Flask
+from app.models import db
+from flask_migrate import Migrate
+from flask_cors import CORS
+from config import ApplicationConfiguration
+from flask_jwt_extended import JWTManager
+
+jwt = JWTManager()
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(ApplicationConfiguration)
+
+    jwt.init_app(app)
+    db.init_app(app)
+    CORS(app, supports_credentials=True)
+    Migrate(app, db)
+
+    # Import blueprints 
+    from app.auth.endpoints import auth_bp
+
+    # Register blueprints 
+    app.register_blueprint(auth_bp)
+
+
+    with app.app_context():
+        db.create_all()
+        
+    return app
