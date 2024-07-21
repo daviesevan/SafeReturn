@@ -13,3 +13,5 @@ class User(db.Model):
     reset_token_expiration = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    emergency_contact = db.relationship('EmergencyContact', uselist=False, back_populates='user')

@@ -18,9 +18,11 @@ def create_app():
 
     # Import blueprints 
     from app.auth.endpoints import auth_bp
+    from app.contacts.endpoints import contact_bp
 
     # Register blueprints 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(contact_bp)
 
 
     with app.app_context():

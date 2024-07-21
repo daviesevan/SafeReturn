@@ -5,3 +5,5 @@ db = SQLAlchemy()
 
 # import models 
 from .Users import User
+from .Contacts import EmergencyContact
+from .Relationship import Relationship
