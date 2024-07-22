@@ -14,4 +14,5 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
-    emergency_contact = db.relationship('EmergencyContact', uselist=False, back_populates='user')
+    emergency_contacts = db.relationship('EmergencyContact', back_populates='user', cascade='all, delete-orphan')
+    checkouts = db.relationship('Checkout', back_populates='user', cascade='all, delete-orphan')
