@@ -1,15 +1,25 @@
-from flask import Blueprint, jsonify, request
-# from kinde_sdk import Configuration
-import os
-import requests
+from flask import Blueprint, jsonify, request, current_app
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.models.Users import User
 from app.models import db
-from app.utils import validateEmail, hashPassword, verifyPassword
+from app.utils import validateEmail, hashPassword, verifyPassword, send_email
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
 auth_bp = Blueprint('authentication', __name__, url_prefix='/auth')
+
+def generate_reset_token(email):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+def confirm_reset_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=expiration)
+    except (SignatureExpired, BadSignature):
+        return None
+    return email
 
 @auth_bp.post('/signup')
 def signup():
@@ -86,3 +96,47 @@ def refresh_access_token():
         return jsonify(access_token=access_token), 200
     except Exception as e:
         return jsonify(error=f'Error refreshing token: {e}'), 401
+
+@auth_bp.post('/forgot-password')
+def forgot_password():
+    data = request.json
+    email = data.get('email')
+
+    if not email or not validateEmail(email):
+        return jsonify(error='Please enter a valid email address'), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify(error='Email not found'), 404
+
+    token = generate_reset_token(user.email)
+    reset_url = f"{request.host_url}auth/reset-password/{token}"
+
+    send_email(user.email, 'Password Reset Request', f'Click here to reset your password: {reset_url}')
+
+    return jsonify(message='Password reset link has been sent to your email'), 200
+
+@auth_bp.post('/reset-password/<token>')
+def reset_password(token):
+    try:
+        email = confirm_reset_token(token)
+        if not email:
+            return jsonify(error='Invalid or expired token'), 400
+
+        data = request.json
+        new_password = data.get('password')
+        if not new_password:
+            return jsonify(error='Password is required'), 400
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify(error='User not found'), 404
+
+        user.password = hashPassword(new_password)
+        db.session.commit()
+
+        return jsonify(message='Password has been reset successfully'), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error=f'Error resetting password: {e}'), 500
