@@ -140,3 +140,35 @@ def reset_password(token):
     except Exception as e:
         db.session.rollback()
         return jsonify(error=f'Error resetting password: {e}'), 500
+    
+@auth_bp.put('/update-password')
+@jwt_required()
+def update_password():
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user:
+            return jsonify(error='User not found'), 404
+
+        data = request.json
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+
+        if not current_password or not new_password:
+            return jsonify(error='Both current and new passwords are required'), 400
+
+        if not verifyPassword(current_password, user.password):
+            return jsonify(error='Current password is incorrect'), 401
+
+        if current_password == new_password:
+            return jsonify(error='New password must be different from the current password'), 400
+
+        user.password = hashPassword(new_password)
+        db.session.commit()
+
+        return jsonify(message='Password updated successfully'), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Exception: {e}")
+        return jsonify(error='An error occurred while updating the password'), 500
