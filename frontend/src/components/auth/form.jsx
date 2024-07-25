@@ -46,7 +46,7 @@ const Form = ({ formType }) => {
       } else if (formType === "login") {
         const response = await loginUser(formData.email, formData.password);
         login(response.access_token);
-        showSuccessToast("Login successful!", {
+        showSuccessToast(response.message, {
           duration: 4000,
           position: "top-right",
         });
@@ -54,9 +54,9 @@ const Form = ({ formType }) => {
       }
     } catch (error) {
       setError(error.message);
-      showErrorToast("Something went wrong!",{
+      showErrorToast("Please try again!",{
         duration: 4000,
-        position: 'bottom-right'
+        position: 'top-center'
       })
     } finally {
       setIsLoading(false);
@@ -110,7 +110,7 @@ const Form = ({ formType }) => {
                 {formType === "login" && (
                   <Link
                     to="/forgot-password"
-                    className="ml-auto inline-block text-sm underline"
+                    className="ml-auto inline-block text-sm hover:underline"
                   >
                     Forgot your password?
                   </Link>

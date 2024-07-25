@@ -10,7 +10,6 @@ const refreshapi = axios.create({
   baseURL,
 });
 
-
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
@@ -69,5 +68,4 @@ const loginUser = async (email, password) => {
   }
 };
 
-
-export { api, refreshapi, signupUser, loginUser }
+export { api, refreshapi, signupUser, loginUser };

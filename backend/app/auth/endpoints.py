@@ -13,7 +13,7 @@ def generate_reset_token(email):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     return serializer.dumps(email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
 
-def confirm_reset_token(token, expiration=3600):
+def confirm_reset_token(token :str, expiration=3600):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
         email = serializer.loads(token, salt=current_app.config['SECURITY_PASSWORD_SALT'], max_age=expiration)
@@ -80,7 +80,7 @@ def login():
         return jsonify(
             access_token=access_token,
             refresh_token=refresh_token,
-            message="Hey there, welcome back"
+            message=f"Hey there {user.fullname}, welcome back! Usipotee!😁"
         ), 200
 
     except Exception:
@@ -107,9 +107,10 @@ def forgot_password():
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        return jsonify(error='Email not found'), 404
+        return jsonify(error='For some reason, we couldn\'t send you the reset email!'), 404
 
     token = generate_reset_token(user.email)
+    print(token)
     reset_url = f"{request.host_url}auth/reset-password/{token}"
 
     send_email(user.email, 'Password Reset Request', f'Click here to reset your password: {reset_url}')
@@ -126,7 +127,7 @@ def reset_password(token):
         data = request.json
         new_password = data.get('password')
         if not new_password:
-            return jsonify(error='Password is required'), 400
+            return jsonify(error='Required field was not filled'), 400
 
         user = User.query.filter_by(email=email).first()
         if not user:

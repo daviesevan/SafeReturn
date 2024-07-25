@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/contexts/toastcontext";
-import { resetPassword } from "@/api/interceptor";
+import { api } from "@/api/interceptor";
+import Loader from "@/components/Loader";
 
 const ResetPassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useParams();
   const navigate = useNavigate();
@@ -23,11 +30,21 @@ const ResetPassword = () => {
     }
     setIsLoading(true);
     try {
-      await resetPassword(token, password);
-      showSuccessToast("Password reset successfully");
-      navigate('/login');
+      // await resetPassword(token, password);
+      const response = await api.post(`/auth/reset-password/${token}`, {
+        token,
+        password,
+      });
+      showSuccessToast("Password reset successfully", {
+        duration: 4000,
+        position: "top-right",
+      });
+      navigate("/login");
     } catch (error) {
-      showErrorToast(error.message || "Failed to reset password");
+      showErrorToast(error.message || "Failed to reset password", {
+        duration: 4000,
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +80,7 @@ const ResetPassword = () => {
               />
             </div>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Resetting...' : 'Reset Password'}
+              {isLoading ? <Loader /> : "Reset Password"}
             </Button>
           </div>
         </form>
