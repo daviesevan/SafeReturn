@@ -8,6 +8,7 @@ class ApplicationConfiguration:
     SECURITY_PASSWORD_SALT = os.getenv("SECURITY_PASSWORD_SALT")
     SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    FRONTEND_URL = 'http://localhost:3000'
     JWT_SECRET_KEY = os.getenv('APP_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = 86400  # 1 day
     JWT_REFRESH_TOKEN_EXPIRES = 86400  # 1 day
