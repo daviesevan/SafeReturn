@@ -11,7 +11,7 @@ const Navbar = () => {
     <header>
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          <Link to="/home" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <Home className="mr-3 h-6 sm:h-9" />
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               SafeReturn
@@ -92,18 +92,18 @@ const Navbar = () => {
               <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                 <li className="mt-2">
                   <Link
-                    to="/categories"
+                    to="/missing"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-gray-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    Categories
+                    Missing
                   </Link>
                 </li>
                 <li className="mt-2">
                   <Link
-                    to="/my-recipes"
+                    to="/report"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    My Recipes
+                    Report
                   </Link>
                 </li>
                 <li className="mt-2">
@@ -111,26 +111,26 @@ const Navbar = () => {
                     to="/meal-planner"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    Meal Planner
+                    Pricing
                   </Link>
                 </li>
-                <li className="mt-2">
+                {/* <li className="mt-2">
                   <Link
                     to="/shopping-list"
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                   >
                     Shopping list
                   </Link>
-                </li>
+                </li> */}
                 
-                {/* <li className="relative ml-auto flex-1 md:grow-0">
+                <li className="relative ml-auto flex-1 md:grow-0">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search..."
+                    placeholder="Search by name, keyword..."
                     className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
                   />
-                </li> */}
+                </li>
               </ul>
             ) : (
               <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">

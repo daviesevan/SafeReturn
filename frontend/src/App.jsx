@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Navbar from "./components/Navbar";
 import NotFoundPage from "./pages/NotFoundPage";
+import CheckoutPage from "./pages/checkout/CheckoutPage";
 
 const Register = () => {
   localStorage.removeItem("access_token");
@@ -21,7 +22,8 @@ function App() {
         <AuthProvider>
           <Navbar />
           <Routes>
-            <Route path="/home" element={<Index />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/home" element={<CheckoutPage />} />
             <Route path="/signup" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

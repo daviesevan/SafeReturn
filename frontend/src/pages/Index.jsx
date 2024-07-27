@@ -1,8 +1,11 @@
+import HeroSection from '@/components/landingpage/HeroSection'
 import React from 'react'
 
 const Index = () => {
   return (
-    <div>This is the landing page</div>
+    <div>
+      <HeroSection />
+    </div>
   )
 }
 
