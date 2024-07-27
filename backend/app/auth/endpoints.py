@@ -111,36 +111,46 @@ def forgot_password():
 
     token = generate_reset_token(user.email)
     print(token)
-    reset_url = f"{request.host_url}auth/reset-password/{token}"
+    # Update the reset URL to point to your frontend
+    reset_url = f"{current_app.config['FRONTEND_URL']}/reset-password/{token}"
 
     send_email(user.email, 'Password Reset Request', f'Click here to reset your password: {reset_url}')
 
     return jsonify(message='Password reset link has been sent to your email'), 200
 
-@auth_bp.post('/reset-password/<token>')
+
+@auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    try:
+    if request.method == 'GET':
         email = confirm_reset_token(token)
         if not email:
             return jsonify(error='Invalid or expired token'), 400
+        return jsonify(message='Token is valid, you can now reset your password'), 200
 
-        data = request.json
-        new_password = data.get('password')
-        if not new_password:
-            return jsonify(error='Required field was not filled'), 400
+    if request.method == 'POST':
+        try:
+            email = confirm_reset_token(token)
+            if not email:
+                return jsonify(error='Invalid or expired token'), 400
 
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            return jsonify(error='User not found'), 404
+            data = request.json
+            new_password = data.get('password')
+            if not new_password:
+                return jsonify(error='Required field was not filled'), 400
 
-        user.password = hashPassword(new_password)
-        db.session.commit()
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                return jsonify(error='User not found'), 404
 
-        return jsonify(message='Password has been reset successfully'), 200
+            user.password = hashPassword(new_password)
+            db.session.commit()
 
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error=f'Error resetting password: {e}'), 500
+            return jsonify(message='Password has been reset successfully'), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify(error=f'Error resetting password: {e}'), 500
+
     
 @auth_bp.put('/update-password')
 @jwt_required()
