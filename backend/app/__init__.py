@@ -4,8 +4,10 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from config import ApplicationConfiguration
 from flask_jwt_extended import JWTManager
-
+from authlib.integrations.flask_client import OAuth
+from flask_session import Session
 jwt = JWTManager()
+oauth = OAuth()
 
 def create_app():
     app = Flask(__name__)
@@ -14,9 +16,10 @@ def create_app():
     # Initialize JWT, Database, CORS, and Migrate with the app
     jwt.init_app(app)
     db.init_app(app)
+    oauth.init_app(app)
     CORS(app, supports_credentials=True)
     Migrate(app, db)
-
+    Session(app)
     # Import blueprints 
     from app.auth.endpoints import auth_bp
     from app.contacts.endpoints import contact_bp
