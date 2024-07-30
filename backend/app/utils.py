@@ -33,15 +33,16 @@ def generate_reset_code():
     return ''.join(random.choices(string.digits, k=6))
 
 def send_email(to_email, subject, body):
-    from_email = 'tanuilelan254@gmail.com'
-    from_password = 'tppzacwdtxzaqdvp'
+    from_email = 'safereturn254@gmail.com'
+    from_password = 'rhqxntcgibkzhwrq'
 
     msg = MIMEMultipart()
     msg['From'] = from_email
     msg['To'] = to_email
     msg['Subject'] = subject
 
-    msg.attach(MIMEText(body, 'plain'))
+    # Use 'html' instead of 'plain' for HTML content
+    msg.attach(MIMEText(body, 'html'))
 
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
