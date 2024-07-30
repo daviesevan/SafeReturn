@@ -41,7 +41,6 @@ def send_email(to_email, subject, body):
     msg['To'] = to_email
     msg['Subject'] = subject
 
-    # Use 'html' instead of 'plain' for HTML content
     msg.attach(MIMEText(body, 'html'))
 
     try:

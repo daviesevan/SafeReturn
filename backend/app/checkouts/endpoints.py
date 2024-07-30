@@ -5,7 +5,7 @@ from app.models.Users import User
 from app.models.Contacts import EmergencyContact
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
-from app.utils import send_email  # Ensure this function is properly defined in your utils
+from app.utils import send_email 
 
 checkout_bp = Blueprint("checkout", __name__, url_prefix="/checkouts")
 
