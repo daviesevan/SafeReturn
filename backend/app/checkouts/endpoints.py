@@ -134,7 +134,7 @@ def get_user_checkouts():
         db.session.rollback()
         return jsonify(error=f"We are really sorry about this! {e}")
 
-# Update checkout endpoint 
+ 
 @checkout_bp.put('/<checkout_id>/update')
 @jwt_required()
 def update_user_checkout(checkout_id: int):
@@ -161,8 +161,7 @@ def update_user_checkout(checkout_id: int):
     except Exception as e:
         db.session.rollback()
         return jsonify(error=f"We are really sorry about this! {e}")
-
-# Retrieve checkout detail endpoint 
+ 
 @checkout_bp.get('/<checkout_id>/details')
 @jwt_required()
 def get_user_checkout_details(checkout_id: int):

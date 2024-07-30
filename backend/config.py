@@ -16,6 +16,6 @@ class ApplicationConfiguration:
     GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
     GOOGLE_USERINFO_ENDPOINT = 'https://openidconnect.googleapis.com/v1/userinfo'
     SESSION_TYPE = 'filesystem'
-    SESSION_FILE_DIR = './sessions/'  # Directory where session files will be stored
+    SESSION_FILE_DIR = './sessions/'  
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True 
