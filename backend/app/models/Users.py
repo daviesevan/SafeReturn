@@ -7,7 +7,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False, default=unique_ids)
     email = db.Column(db.String(325), unique=True, nullable=False)
     fullname = db.Column(db.String(150), nullable=False)
-    password = db.Column(db.String(325), nullable=False)
+    password = db.Column(db.String(325), nullable=True)
     isEmailVerified = db.Column(db.Boolean, default=False)
     reset_token = db.Column(db.String(100), nullable=True)
     reset_token_expiration = db.Column(db.DateTime, nullable=True)

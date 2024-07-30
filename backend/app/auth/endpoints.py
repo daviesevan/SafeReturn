@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, request, current_app
+import os
+from flask import Blueprint, jsonify, request, current_app, url_for, redirect
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.models.Users import User
@@ -6,8 +7,21 @@ from app.models import db
 from app.utils import validateEmail, hashPassword, verifyPassword, send_email
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import UnmappedInstanceError
+from app import oauth
+from urllib.parse import urlencode
 
 auth_bp = Blueprint('authentication', __name__, url_prefix='/auth')
+
+
+google = oauth.register(
+    name='google',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    client_kwargs={'scope': 'openid profile email'},
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration'
+)
 
 def generate_reset_token(email):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
@@ -183,3 +197,40 @@ def update_password():
         db.session.rollback()
         print(f"Exception: {e}")
         return jsonify(error='An error occurred while updating the password'), 500
+
+# Google auth 
+@auth_bp.route('/authorize/google')
+def google_authorize():
+    redirect_uri = url_for('authentication.google_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@auth_bp.route('/callback/google')
+def google_callback():
+    try:
+        token = google.authorize_access_token()
+        userinfo_endpoint = current_app.config['GOOGLE_USERINFO_ENDPOINT']
+        resp = google.get(userinfo_endpoint)
+        user_info = resp.json()
+
+        email = user_info['email']
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            user = User(email=email, fullname=user_info.get('name'), isEmailVerified=True)
+            db.session.add(user)
+            db.session.commit()
+
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        params = urlencode({
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'message': f"Hey there {user.fullname}, welcome back!"
+        })
+        frontend_url = f"{os.getenv('FRONTEND_URL')}/auth/callback?{params}"
+        return redirect(frontend_url)
+    except Exception as e:
+        db.session.rollback()
+        print(f"Exception: {e}")
+        return jsonify(error='An error occurred during Google authentication'), 500

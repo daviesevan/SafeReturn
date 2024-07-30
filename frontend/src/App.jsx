@@ -9,6 +9,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import Navbar from "./components/Navbar";
 import NotFoundPage from "./pages/NotFoundPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
+import GoogleAuth from "./components/auth/GoogleAuth";
 
 const Register = () => {
   localStorage.removeItem("access_token");
@@ -26,6 +27,7 @@ function App() {
             <Route path="/home" element={<CheckoutPage />} />
             <Route path="/signup" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<GoogleAuth />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="*" element={<NotFoundPage />} />

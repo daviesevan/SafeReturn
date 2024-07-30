@@ -25,10 +25,15 @@ const Form = ({ formType }) => {
   });
   const { showSuccessToast, showErrorToast } = useToast();
   const navigate = useNavigate();
-  const {login} = useContext(AuthContext)
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleGoogleAuth = () => {
+    window.location.href =
+      "http://localhost:5000/auth/authorize/google";
   };
 
   const handleSubmit = async (e) => {
@@ -50,14 +55,14 @@ const Form = ({ formType }) => {
           duration: 4000,
           position: "top-right",
         });
-        navigate('/home')
+        navigate("/home");
       }
     } catch (error) {
       setError(error.message);
-      showErrorToast("Please try again!",{
+      showErrorToast("Please try again!", {
         duration: 4000,
-        position: 'top-center'
-      })
+        position: "top-center",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +72,9 @@ const Form = ({ formType }) => {
     <Card className="mx-auto max-w-sm mt-24">
       <CardHeader>
         <CardTitle className="text-2xl">
-          {formType === "signup" ? "Welcome👋 Create an account to continue!" : "Hey there👋, welcome back!"}
+          {formType === "signup"
+            ? "Welcome👋 Create an account to continue!"
+            : "Hey there👋, welcome back!"}
         </CardTitle>
         <CardDescription>
           {formType === "signup"
@@ -76,6 +83,10 @@ const Form = ({ formType }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <Button onClick={handleGoogleAuth} variant="outline" className="w-full">
+          {formType === "signup" ? "Signup" : "Login"} with Google
+        </Button>
+        <p>OR</p>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4">
             {formType === "signup" && (
@@ -128,17 +139,14 @@ const Form = ({ formType }) => {
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading
-                ? <Loader loading={isLoading} />
-                : formType === "signup"
-                ? "Sign Up"
-                : "Login"}
+              {isLoading ? (
+                <Loader loading={isLoading} />
+              ) : formType === "signup" ? (
+                "Sign Up"
+              ) : (
+                "Login"
+              )}
             </Button>
-            {formType === "login" && (
-              <Button variant="outline" className="w-full">
-                Login with Google
-              </Button>
-            )}
           </div>
           <div className="mt-4 text-center text-sm">
             {formType === "signup" ? (
