@@ -89,7 +89,7 @@ def create_checkout():
                 <div class="container">
                     <h1>Checkout Notification</h1>
                     <p>Dear {contact.name},</p>
-                    <p>User <strong>{user.fullname}</strong> has checked out.</p>
+                    <p><strong>{user.fullname}</strong> has checked out.</p>
                     <p><span class="highlight">Note:</span> {note}</p>
                     <p>We hope they return safely. Thank you for your attention!</p>
                     <div class="footer">
